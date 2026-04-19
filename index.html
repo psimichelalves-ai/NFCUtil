@@ -8,42 +8,46 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
 
-  <!-- Biblioteca QR Code -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- QR Code lib (versão estável) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8"></script>
 
   <style>
-    body { font-family: Arial; text-align: center; padding: 20px; }
-    select, input, button { padding: 10px; margin: 10px; width: 90%; }
+    body { font-family: Arial; padding: 20px; text-align: center; }
+    input, select, button { padding: 10px; margin: 8px; width: 90%; }
     #descricao { font-weight: bold; margin-top: 10px; }
     #reader { width: 300px; margin: auto; }
   </style>
 </head>
+
 <body>
 
 <h1>NFCUtil</h1>
 
-<!-- SELECT -->
-<h2>Selecionar Carta</h2>
-<select id="cartas"></select>
-<p id="descricao"></p>
-
-<!-- INPUT MANUAL -->
-<h2>Ou digitar código</h2>
+<!-- 1. DIGITAÇÃO -->
+<h3>1. Digitar código</h3>
 <input type="text" id="codigoManual" placeholder="Ex: PLANEJ01">
 
-<!-- BOTÕES -->
-<h2>Gravar NFC</h2>
-<button onclick="gravarNFC()">Gravar</button>
+<!-- 2. SELECT -->
+<h3>2. Selecionar carta</h3>
+<select id="cartas">
+  <option value="">-- Selecione --</option>
+</select>
+<p id="descricao"></p>
 
-<h2>Ler NFC</h2>
-<button onclick="lerNFC()">Ler Tag</button>
-
-<h2>Ler QR Code</h2>
-<button onclick="iniciarQR()">Ler QR</button>
-
+<!-- 3. QR -->
+<h3>3. Ler QR Code</h3>
+<button onclick="iniciarQR()">Abrir câmera</button>
 <div id="reader"></div>
 
-<p id="resultado">Aguardando ação...</p>
+<!-- 4. GRAVAR -->
+<h3>4. Gravar NFC</h3>
+<button onclick="gravarNFC()">Gravar</button>
+
+<!-- 5. TESTAR -->
+<h3>5. Testar NFC</h3>
+<button onclick="lerNFC()">Ler NFC</button>
+
+<p id="resultado">Aguardando...</p>
 
 <script src="app.js"></script>
 
