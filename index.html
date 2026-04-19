@@ -8,45 +8,50 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
 
+  <!-- Biblioteca QR Code -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
   <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      text-align: center;
-    }
-    input, button {
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
-    }
-    #resultado {
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    select, input, button { padding: 10px; margin: 10px; width: 90%; }
+    #descricao { font-weight: bold; margin-top: 10px; }
+    #reader { width: 300px; margin: auto; }
   </style>
 </head>
 <body>
 
-  <h1>NFCUtil</h1>
+<h1>NFCUtil</h1>
 
-  <h2>Gravar NFC</h2>
-  <input type="text" id="codigo" placeholder="Digite o código">
-  <br>
-  <button onclick="gravarNFC()">Gravar</button>
+<!-- SELECT -->
+<h2>Selecionar Carta</h2>
+<select id="cartas"></select>
+<p id="descricao"></p>
 
-  <h2>Ler NFC</h2>
-  <button onclick="lerNFC()">Ler Tag</button>
+<!-- INPUT MANUAL -->
+<h2>Ou digitar código</h2>
+<input type="text" id="codigoManual" placeholder="Ex: PLANEJ01">
 
-  <p id="resultado">Aproxime uma tag NFC</p>
+<!-- BOTÕES -->
+<h2>Gravar NFC</h2>
+<button onclick="gravarNFC()">Gravar</button>
 
-  <script src="app.js"></script>
+<h2>Ler NFC</h2>
+<button onclick="lerNFC()">Ler Tag</button>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(() => console.log('Service Worker registrado'));
-    }
-  </script>
+<h2>Ler QR Code</h2>
+<button onclick="iniciarQR()">Ler QR</button>
+
+<div id="reader"></div>
+
+<p id="resultado">Aguardando ação...</p>
+
+<script src="app.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js');
+}
+</script>
 
 </body>
 </html>
