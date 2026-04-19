@@ -1,8 +1,16 @@
 // =======================
-// LISTA DE CARTAS
+// ELEMENTOS (CORREÇÃO IMPORTANTE)
+// =======================
+const select = document.getElementById("cartas");
+const descricao = document.getElementById("descricao");
+const resultado = document.getElementById("resultado");
+const inputManual = document.getElementById("codigoManual");
+
+// =======================
+// DADOS
 // =======================
 const CARTAS = {
-  PLANEJ01: "Qual é o objetivo deste conteúdo que vou estudar?",
+   PLANEJ01: "Qual é o objetivo deste conteúdo que vou estudar?",
   PLANEJ02: "O que preciso compreender para considerar que aprendi?",
   PLANEJ03: "Como posso verificar se realmente compreendi esse conteúdo?",
   PLANEJ04: "O que eu já sei que pode me ajudar nesse estudo?",
@@ -52,32 +60,35 @@ const CARTAS = {
 };
 
 // =======================
-// POPULAR SELECT
+// POPULAR SELECT (CORREÇÃO PRINCIPAL)
 // =======================
-const select = document.getElementById("cartas");
-const descricao = document.getElementById("descricao");
+function carregarSelect() {
+  select.innerHTML = '<option value="">-- Selecione --</option>';
 
-Object.keys(CARTAS).forEach(codigo => {
-  const opt = document.createElement("option");
-  opt.value = codigo;
-  opt.textContent = codigo;
-  select.appendChild(opt);
-});
+  Object.entries(CARTAS).forEach(([codigo, texto]) => {
+    const opt = document.createElement("option");
+    opt.value = codigo;
+    opt.textContent = `${codigo} - ${texto}`;
+    select.appendChild(opt);
+  });
+}
 
 // Atualizar descrição
 select.addEventListener("change", () => {
-  descricao.innerText = CARTAS[select.value];
+  const codigo = select.value;
+  descricao.innerText = CARTAS[codigo] || "";
 });
 
-// Inicial
-select.dispatchEvent(new Event("change"));
+// GARANTE EXECUÇÃO NO MOBILE
+window.addEventListener("DOMContentLoaded", carregarSelect);
 
 // =======================
-// OBTER CÓDIGO
+// OBTER CÓDIGO (PRIORIDADE CORRETA)
 // =======================
 function obterCodigo() {
-  const manual = document.getElementById("codigoManual").value.trim();
-  return manual || select.value;
+  if (inputManual.value.trim()) return inputManual.value.trim();
+  if (select.value) return select.value;
+  return null;
 }
 
 // =======================
@@ -87,20 +98,19 @@ async function gravarNFC() {
   const codigo = obterCodigo();
 
   if (!codigo) {
-    alert("Informe um código!");
+    resultado.innerText = "⚠️ Informe um código";
     return;
   }
 
   try {
     const ndef = new NDEFReader();
-    await ndef.write({
-      records: [{ recordType: "text", data: codigo }]
-    });
+    await ndef.write(codigo);
 
     resultado.innerText = "✅ Gravado: " + codigo;
 
   } catch (e) {
-    resultado.innerText = "❌ Erro ao gravar";
+    console.error(e);
+    resultado.innerText = "❌ Erro ao gravar NFC";
   }
 }
 
@@ -117,19 +127,20 @@ async function lerNFC() {
     ndef.onreading = event => {
       const records = event.message.records;
 
-      if (!records.length) {
+      if (!records || records.length === 0) {
         resultado.innerText = "⚠️ Tag vazia";
         return;
       }
 
       const decoder = new TextDecoder();
-      let codigo = decoder.decode(records[0].data);
+      const codigo = decoder.decode(records[0].data);
 
       mostrarResultado(codigo);
     };
 
-  } catch {
-    resultado.innerText = "❌ Erro leitura NFC";
+  } catch (e) {
+    console.error(e);
+    resultado.innerText = "❌ Erro ao ler NFC";
   }
 }
 
@@ -138,24 +149,36 @@ async function lerNFC() {
 // =======================
 function mostrarResultado(codigo) {
   if (CARTAS[codigo]) {
-    resultado.innerText = `📄 ${codigo} - ${CARTAS[codigo]}`;
+    resultado.innerText = `${codigo} - ${CARTAS[codigo]}`;
   } else {
-    resultado.innerText = `📄 Código: ${codigo}`;
+    resultado.innerText = `Código: ${codigo}`;
   }
 }
 
 // =======================
-// QR CODE
+// QR CODE (CORRIGIDO)
 // =======================
+let qr;
+
 function iniciarQR() {
-  const qr = new Html5Qrcode("reader");
+  const readerDiv = document.getElementById("reader");
+  readerDiv.innerHTML = ""; // limpa
+
+  qr = new Html5Qrcode("reader");
 
   qr.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
-    codigo => {
+    (decodedText) => {
       qr.stop();
-      mostrarResultado(codigo);
+      inputManual.value = decodedText;
+      resultado.innerText = "QR lido: " + decodedText;
+    },
+    (error) => {
+      // ignorar erros de leitura contínuos
     }
-  );
+  ).catch(err => {
+    console.error(err);
+    resultado.innerText = "❌ Não foi possível acessar a câmera";
+  });
 }
