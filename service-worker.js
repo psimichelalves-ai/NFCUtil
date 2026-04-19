@@ -1,7 +1,22 @@
+const CACHE_NAME = "nfcutil-v1";
+
 self.addEventListener("install", event => {
-  console.log("Service Worker instalado");
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll([
+        "./",
+        "./index.html",
+        "./app.js",
+        "./manifest.json"
+      ]);
+    })
+  );
 });
 
 self.addEventListener("fetch", event => {
-  // básico (sem cache avançado)
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
