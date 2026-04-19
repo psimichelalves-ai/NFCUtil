@@ -4,20 +4,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFCUtil</title>
+
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
+
   <h1>NFCUtil</h1>
 
-  <h2>Gravar</h2>
+  <h2>Gravar NFC</h2>
   <input type="text" id="codigo" placeholder="Digite o código">
-  <button onclick="gravarNFC()">Gravar na NFC</button>
+  <br>
+  <button onclick="gravarNFC()">Gravar</button>
 
-  <h2>Testar</h2>
-  <button onclick="lerNFC()">Ler NFC</button>
+  <h2>Ler NFC</h2>
+  <button onclick="lerNFC()">Ler Tag</button>
 
-  <p id="resultado"></p>
+  <p id="resultado">Aproxime uma tag NFC</p>
 
   <script src="app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service Worker registrado'));
+    }
+  </script>
+
 </body>
 </html>
