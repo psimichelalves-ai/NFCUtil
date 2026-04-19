@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFCUtil</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <h1>NFCUtil</h1>
+
+  <h2>Gravar</h2>
+  <input type="text" id="codigo" placeholder="Digite o código">
+  <button onclick="gravarNFC()">Gravar na NFC</button>
+
+  <h2>Testar</h2>
+  <button onclick="lerNFC()">Ler NFC</button>
+
+  <p id="resultado"></p>
+
+  <script src="app.js"></script>
+</body>
+</html>
